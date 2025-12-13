@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    {
+      "name": "custom-logo",
+      "enabled": true
+    }
+  ],
+  "reportLanguage": "en",
+  "isAggregated": true
+}

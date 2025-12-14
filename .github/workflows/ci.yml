@@ -12,21 +12,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: testdb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U user"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,18 +20,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Generate tests
+        run: npx bddgen
 
       - name: Run tests
         run: npm run test
 
       - name: Generate Allure report
+        if: always()
         run: npm run allure:generate
 
       - name: Upload Allure report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: reports/allure/html-report
+          path: allure-report

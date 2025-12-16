@@ -1,0 +1,19 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+[INFO] 2025-12-16T03:24:36.361Z: ✅ Configuration loaded: {
+  "baseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000/api",
+  "testUser": "user@example.com",
+  "browser": "chromium",
+  "timeout": 30000,
+  "headless": true,
+  "workers": 1
+}
+[INFO] 2025-12-16T03:24:36.388Z: 
+==================================================
+[INFO] 2025-12-16T03:24:36.388Z: 🚀 Initializing API World
+[INFO] 2025-12-16T03:24:36.388Z: ==================================================
+
+[INFO] 2025-12-16T03:24:36.647Z: ==================================================
+[INFO] 2025-12-16T03:24:36.647Z: ✅ API World cleanup
+[INFO] 2025-12-16T03:24:36.647Z: ==================================================
+

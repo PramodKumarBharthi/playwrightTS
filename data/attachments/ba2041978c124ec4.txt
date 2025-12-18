@@ -1,0 +1,14 @@
+[INFO] 2025-12-18T03:21:17.582Z: 
+==================================================
+[INFO] 2025-12-18T03:21:17.582Z: 🚀 Starting: Unsuccessful login with invalid credentials
+[INFO] 2025-12-18T03:21:17.582Z: ==================================================
+
+[INFO] 2025-12-18T03:21:17.582Z: UIWorld initialized for: Unsuccessful login with invalid credentials
+[INFO] 2025-12-18T03:21:17.617Z: 🌐 Navigating to: http://localhost:3000
+[INFO] 2025-12-18T03:21:17.617Z: Navigating to http://localhost:3000
+[INFO] 2025-12-18T03:21:17.974Z: 🧹 Cleaning up UIWorld resources
+[INFO] 2025-12-18T03:21:17.974Z: ✅ Cleanup completed. Test duration: 0.39s
+[INFO] 2025-12-18T03:21:17.974Z: ==================================================
+[INFO] 2025-12-18T03:21:17.974Z: ✅ Completed: Unsuccessful login with invalid credentials
+[INFO] 2025-12-18T03:21:17.974Z: ==================================================
+

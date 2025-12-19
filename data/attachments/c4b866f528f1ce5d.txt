@@ -1,0 +1,19 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[INFO] 2025-12-19T03:24:23.253Z: ✅ Configuration loaded: {
+  "baseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000/api",
+  "testUser": "user@example.com",
+  "browser": "chromium",
+  "timeout": 30000,
+  "headless": true,
+  "workers": 1
+}
+[INFO] 2025-12-19T03:24:23.291Z: 
+==================================================
+[INFO] 2025-12-19T03:24:23.291Z: 🚀 Initializing API World
+[INFO] 2025-12-19T03:24:23.291Z: ==================================================
+
+[INFO] 2025-12-19T03:24:23.600Z: ==================================================
+[INFO] 2025-12-19T03:24:23.600Z: ✅ API World cleanup
+[INFO] 2025-12-19T03:24:23.600Z: ==================================================
+

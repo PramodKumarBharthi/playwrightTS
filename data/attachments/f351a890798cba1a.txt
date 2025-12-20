@@ -1,0 +1,19 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+[INFO] 2025-12-20T03:15:23.694Z: ✅ Configuration loaded: {
+  "baseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000/api",
+  "testUser": "user@example.com",
+  "browser": "chromium",
+  "timeout": 30000,
+  "headless": true,
+  "workers": 1
+}
+[INFO] 2025-12-20T03:15:23.731Z: 
+==================================================
+[INFO] 2025-12-20T03:15:23.731Z: 🚀 Initializing API World
+[INFO] 2025-12-20T03:15:23.731Z: ==================================================
+
+[INFO] 2025-12-20T03:15:23.923Z: ==================================================
+[INFO] 2025-12-20T03:15:23.923Z: ✅ API World cleanup
+[INFO] 2025-12-20T03:15:23.923Z: ==================================================
+

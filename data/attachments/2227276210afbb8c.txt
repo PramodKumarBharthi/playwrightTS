@@ -1,0 +1,19 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[INFO] 2025-12-20T03:15:36.674Z: ✅ Configuration loaded: {
+  "baseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000/api",
+  "testUser": "user@example.com",
+  "browser": "chromium",
+  "timeout": 30000,
+  "headless": true,
+  "workers": 1
+}
+[INFO] 2025-12-20T03:15:36.704Z: 
+==================================================
+[INFO] 2025-12-20T03:15:36.705Z: 🚀 Initializing API World
+[INFO] 2025-12-20T03:15:36.705Z: ==================================================
+
+[INFO] 2025-12-20T03:15:36.990Z: ==================================================
+[INFO] 2025-12-20T03:15:36.990Z: ✅ API World cleanup
+[INFO] 2025-12-20T03:15:36.990Z: ==================================================
+

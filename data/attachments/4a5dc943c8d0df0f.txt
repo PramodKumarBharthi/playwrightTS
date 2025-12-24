@@ -1,0 +1,19 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+[INFO] 2025-12-24T03:24:00.850Z: ✅ Configuration loaded: {
+  "baseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000/api",
+  "testUser": "user@example.com",
+  "browser": "chromium",
+  "timeout": 30000,
+  "headless": true,
+  "workers": 1
+}
+[INFO] 2025-12-24T03:24:00.889Z: 
+==================================================
+[INFO] 2025-12-24T03:24:00.889Z: 🚀 Initializing API World
+[INFO] 2025-12-24T03:24:00.889Z: ==================================================
+
+[INFO] 2025-12-24T03:24:01.094Z: ==================================================
+[INFO] 2025-12-24T03:24:01.094Z: ✅ API World cleanup
+[INFO] 2025-12-24T03:24:01.094Z: ==================================================
+

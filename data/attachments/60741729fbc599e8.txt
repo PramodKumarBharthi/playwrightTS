@@ -1,0 +1,20 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+TEST_ENV: development
+[INFO] 2025-12-26T14:29:02.963Z: ✅ Configuration loaded: {
+  "baseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000/api",
+  "testUser": "user@example.com",
+  "browser": "chromium",
+  "timeout": 30000,
+  "headless": true,
+  "workers": 1
+}
+[INFO] 2025-12-26T14:29:02.993Z: 
+==================================================
+[INFO] 2025-12-26T14:29:02.993Z: 🚀 Initializing API World
+[INFO] 2025-12-26T14:29:02.993Z: ==================================================
+
+[INFO] 2025-12-26T14:29:03.013Z: ==================================================
+[INFO] 2025-12-26T14:29:03.013Z: ✅ API World cleanup
+[INFO] 2025-12-26T14:29:03.013Z: ==================================================
+

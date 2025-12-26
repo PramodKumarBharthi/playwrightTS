@@ -1,0 +1,21 @@
+{
+  "endpoint": "https://api.example.com/data",
+  "payload": {
+    "key": "value"
+  },
+  "putRequest": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "name": "updated-project",
+      "domain": "api.example.com",
+      "headerAuthorization": "",
+      "minRetries": 1,
+      "retryDelaySecs": 5
+    }
+  },
+  "deleteRequest": {
+    "id": "8e3aa909-fb84-4495-944d-a4c192defe66"
+  }
+}

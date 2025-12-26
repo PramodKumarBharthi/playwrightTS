@@ -1,0 +1,6 @@
+TEST_ENV=API
+BASE_URL=https://posthook-api.mock.beeceptor.com
+GET_ENDPOINT=/v1/hooks
+POST_ENDPOINT=/v1/hooks
+DELETE_ENDPOINT=/v1/hooks/{hook_id}
+PUT_ENDPOINT=/v1/projects/

@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
-import path from 'path';
 import { logger } from '../utils/logger';
 
-// Load .env file from project root
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Load .env file
+dotenv.config();
 
 export const config = {
   baseUrl: process.env.BASE_URL || 'http://localhost:3000',
@@ -18,6 +17,7 @@ export const config = {
 };
 
 // Log configuration on startup
+console.log(`TEST_ENV: ${config.testEnv}`);
 logger.info(
   `✅ Configuration loaded: ${JSON.stringify(
     {

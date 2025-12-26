@@ -1,19 +1,18 @@
 import { APIRequestContext } from '@playwright/test';
 import { test as base, createBdd } from 'playwright-bdd';
-import { UserClient } from '../api/clients/userClient';
 import { IResponse } from '../interfaces/iResponse';
 import { logger as Logger } from '../utils/logger';
 
 export class ApiWorld {
   public request: APIRequestContext;
-  public userClient: UserClient;
   public response!: IResponse;
   public requestBody: any;
   public userId!: string;
+  public objectId!: string;
+  public hookId?: string;
 
   constructor(request: APIRequestContext) {
     this.request = request;
-    this.userClient = new UserClient(request);
   }
 }
 

@@ -1,0 +1,20 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+TEST_ENV: development
+[INFO] 2025-12-27T03:22:54.561Z: ✅ Configuration loaded: {
+  "baseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000/api",
+  "testUser": "user@example.com",
+  "browser": "chromium",
+  "timeout": 30000,
+  "headless": true,
+  "workers": 1
+}
+[INFO] 2025-12-27T03:22:54.591Z: 
+==================================================
+[INFO] 2025-12-27T03:22:54.591Z: 🚀 Initializing API World
+[INFO] 2025-12-27T03:22:54.591Z: ==================================================
+
+[INFO] 2025-12-27T03:22:54.615Z: ==================================================
+[INFO] 2025-12-27T03:22:54.615Z: ✅ API World cleanup
+[INFO] 2025-12-27T03:22:54.615Z: ==================================================
+

@@ -14,6 +14,8 @@ jobs:
       contents: write
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://opensource-demo.orangehrmlive.com/web/index.php/auth/login
     strategy:
       fail-fast: false
       matrix:
@@ -60,6 +62,9 @@ jobs:
       contents: write
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://posthook-api.mock.beeceptor.com
+      API_BASE_URL: https://posthook-api.mock.beeceptor.com
 
     steps:
       - uses: actions/checkout@v4
@@ -83,7 +88,7 @@ jobs:
         run: npx bddgen
 
       - name: Run API tests
-        run: npx playwright test --grep @api
+        run: npx playwright test --project=API
       
       - name: Generate Allure Report
         if: always()

@@ -1,5 +1,10 @@
 {
-  "endpoint": "https://api.example.com/data",
+  "endpoints": {
+    "getEndpoint": "/v1/hooks",
+    "postEndpoint": "/v1/hooks",
+    "deleteEndpoint": "/v1/hooks/{hook_id}",
+    "putEndpoint": "/v1/projects/"
+  },
   "payload": {
     "key": "value"
   },

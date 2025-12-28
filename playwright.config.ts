@@ -20,7 +20,6 @@ const testDir = defineBddConfig({
 const workers = process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : 1;
 const timeout = parseInt(process.env.TIMEOUT || '30000', 10);
 const isHeadless = process.env.HEADLESS?.trim().toLowerCase() !== 'false';
-const isApiExecution = process.env.TEST_ENV === 'API';
 
 export default defineConfig({
   testDir,
@@ -54,12 +53,12 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-  projects: isApiExecution ? [
+  projects: [
     {
       name: 'API',
       use: {},
+      grep: /@api/,
     },
-  ] : [
     {
       name: 'chromium',
       use: {
@@ -68,6 +67,7 @@ export default defineConfig({
           headless: isHeadless,
         },
       },
+      grepInvert: /@api/,
     },
     {
       name: 'firefox',
@@ -77,6 +77,7 @@ export default defineConfig({
           headless: isHeadless,
         },
       },
+      grepInvert: /@api/,
     },
     {
       name: 'webkit',
@@ -86,6 +87,7 @@ export default defineConfig({
           headless: isHeadless,
         },
       },
+      grepInvert: /@api/,
     },
     {
       name: 'Mobile Chrome',
@@ -95,6 +97,7 @@ export default defineConfig({
           headless: isHeadless,
         },
       },
+      grepInvert: /@api/,
     },
     {
       name: 'Mobile Safari',
@@ -104,6 +107,7 @@ export default defineConfig({
           headless: isHeadless,
         },
       },
+      grepInvert: /@api/,
     },
   ],
 });

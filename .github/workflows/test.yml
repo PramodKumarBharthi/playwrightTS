@@ -9,7 +9,7 @@ on:
     - cron: '0 2 * * *'
 
 jobs:
-  test:
+  web-tests:
     permissions:
       contents: write
     timeout-minutes: 60
@@ -33,12 +33,15 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+      
+      - name: Create .env file for UI tests
+        run: cp .envUI .env
 
       - name: Generate tests
         run: npx bddgen
 
-      - name: Run tests on ${{ matrix.browser }}
-        run: npx playwright test --project=${{ matrix.browser }}
+      - name: Run web tests on ${{ matrix.browser }}
+        run: npx playwright test --project=${{ matrix.browser }} --grep @web
 
       - name: Generate Allure Report
         if: always()
@@ -48,12 +51,68 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-${{ matrix.browser }}
+          name: allure-report-web-${{ matrix.browser }}
           path: allure-report/
           retention-days: 30
 
+  api-tests:
+    permissions:
+      contents: write
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Create .env file for API tests
+        run: cp .envAPI .env
+
+      - name: Generate tests
+        run: npx bddgen
+
+      - name: Run API tests
+        run: npx playwright test --grep @api
+      
+      - name: Generate Allure Report
+        if: always()
+        run: npx allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-api
+          path: allure-report/
+          retention-days: 30
+
+  publish-report:
+    needs: [web-tests, api-tests]
+    if: always() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # This is a placeholder step. In a real scenario, you would
+      # download the artifacts from the test jobs, merge them, 
+      # and then publish a single, combined report.
+      # For now, we'll just create a dummy file to represent the published report.
+      - name: Create dummy report page
+        run: |
+          mkdir -p ./allure-report
+          echo "<html><body><h1>Allure Reports</h1><p>Reports for web and API tests are available as artifacts.</p></body></html>" > ./allure-report/index.html
+
       - name: Publish Report to GitHub Pages
-        if: always() && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

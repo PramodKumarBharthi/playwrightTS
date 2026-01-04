@@ -11,7 +11,6 @@ on:
 jobs:
   web-tests:
     name: Web Tests - ${{ matrix.browser }}
- # Running on chromium only in CI/CD for speed and cost optimization
     permissions:
       contents: write
     timeout-minutes: 60
@@ -19,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [ chromium]
+        browser: [chromium]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,11 +35,33 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # ✅ Create .env for UI tests using GitHub Secrets
       - name: Create .env for UI tests
         run: |
-          cp .envUI .env
-          echo "HEADLESS=true" >> .env
-          echo "TEST_ENV=UI" >> .env
+          cat > .env << EOF
+          # Non-sensitive configuration
+          TEST_ENV=UI
+          BROWSER=chromium
+          TIMEOUT=30000
+          WORKERS=1
+          HEADLESS=true
+          
+          # Injected from GitHub Secrets (never logged)
+          BASE_URL="${{ secrets.BASE_URL }}"
+          TEST_USER="${{ secrets.TEST_USER }}"
+          TEST_PASSWORD="${{ secrets.TEST_PASSWORD }}"
+          API_BASE_URL="${{ secrets.API_BASE_URL }}"
+          EOF
+
+      # ✅ NEW: Verify variables early (catches issues before tests run)
+      - name: 🔍 Verify Environment Variables
+        run: |
+          echo "========== Environment Check =========="
+          echo "✅ BASE_URL length: $(grep '^BASE_URL=' .env | cut -d= -f2 | wc -c) chars"
+          echo "✅ TEST_USER: $(grep '^TEST_USER=' .env | cut -d= -f2)"
+          echo "✅ TEST_PASSWORD length: $(grep '^TEST_PASSWORD=' .env | cut -d= -f2 | wc -c) chars"
+          echo "✅ HEADLESS: $(grep '^HEADLESS=' .env | cut -d= -f2)"
+          echo "========== Check Complete =========="
 
       - name: Generate tests from features
         run: npx bddgen
@@ -86,10 +107,19 @@ jobs:
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
 
+      # ✅ Create .env for API tests using GitHub Secrets
       - name: Create .env for API tests
         run: |
-          cp .envAPI .env
-          echo "HEADLESS=true" >> .env
+          cat > .env << EOF
+          # Non-sensitive configuration
+          HEADLESS=true
+          
+          # Injected from GitHub Secrets (never logged)
+          BASE_URL="${{ secrets.BASE_URL }}"
+          TEST_USER="${{ secrets.TEST_USER }}"
+          TEST_PASSWORD="${{ secrets.TEST_PASSWORD }}"
+          API_BASE_URL="${{ secrets.API_BASE_URL }}"
+          EOF
 
       - name: Generate tests from features
         run: npx bddgen
@@ -135,7 +165,7 @@ jobs:
           find artifacts/ -type f -name "*.json" | while read file; do
             cp "$file" allure-results-merged/
           done
-          echo "✅ Merged $(find allure-results-merged -type f | wc -l) test result files"
+          echo "✅ Mergefind allure-results-merged -type f | wc -l) test result files"
 
       - name: Generate merged Allure report
         run: npx allure generate allure-results-merged --clean -o allure-report

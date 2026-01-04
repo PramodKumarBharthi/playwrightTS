@@ -1,5 +1,8 @@
 /* eslint-disable no-console */
 export const logger = {
+  debug: (message: string) => {
+    console.debug(`[DEBUG] ${new Date().toISOString()}: ${message}`);
+  },
   info: (message: string) => {
     console.log(`[INFO] ${new Date().toISOString()}: ${message}`);
   },

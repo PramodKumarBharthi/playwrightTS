@@ -11,6 +11,7 @@ on:
 jobs:
   web-tests:
     name: Web Tests - ${{ matrix.browser }}
+ # Running on chromium only in CI/CD for speed and cost optimization
     permissions:
       contents: write
     timeout-minutes: 60
@@ -18,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [ chromium, firefox, webkit ]
+        browser: [ chromium]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

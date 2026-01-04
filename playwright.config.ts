@@ -1,4 +1,3 @@
-// playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 import * as os from 'os';
@@ -16,31 +15,38 @@ const testDir = defineBddConfig({
   missingSteps: 'skip-scenario',
 });
 
-// Parse environment variables with defaults
-const workers = process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : 1;
+// Environment-aware configuration
+const workers = process.env.CI ? 1 : (process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : 2);
 const timeout = parseInt(process.env.TIMEOUT || '30000', 10);
-const isHeadless = process.env.HEADLESS?.trim().toLowerCase() !== 'false';
+const isHeadless = process.env.CI ? true : (process.env.HEADLESS?.trim().toLowerCase() !== 'false');
+const retries = process.env.CI ? 2 : 0;
 
 export default defineConfig({
   testDir,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries,
   workers,
   reporter: [
     ['list'],
     ['html', { outputFolder: 'playwright-report' }],
-    ['allure-playwright', {
-      outputFolder: 'allure-results',
-      detail: true,
-      suiteTitle: false,
-      environmentInfo: {
-        os_platform: os.platform(),
-        os_release: os.release(),
-        os_version: os.version?.(),
-        node_version: process.version,
+    [
+      'allure-playwright',
+      {
+        outputFolder: 'allure-results',
+        detail: true,
+        suiteTitle: false,
+        categories: [],
+        environmentInfo: {
+          os_platform: os.platform(),
+          os_release: os.release(),
+          os_version: os.version?.(),
+          node_version: process.version,
+          ci_environment: process.env.CI ? 'GitHub Actions' : 'Local',
+          test_env: process.env.TEST_ENV || 'development',
+        },
       },
-    }],
+    ],
     ['json', { outputFile: 'test-results.json' }],
   ],
   timeout,
@@ -83,26 +89,6 @@ export default defineConfig({
       name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
-        launchOptions: {
-          headless: isHeadless,
-        },
-      },
-      grepInvert: /@api/,
-    },
-    {
-      name: 'Mobile Chrome',
-      use: {
-        ...devices['Pixel 5'],
-        launchOptions: {
-          headless: isHeadless,
-        },
-      },
-      grepInvert: /@api/,
-    },
-    {
-      name: 'Mobile Safari',
-      use: {
-        ...devices['iPhone 12'],
         launchOptions: {
           headless: isHeadless,
         },

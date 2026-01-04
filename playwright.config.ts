@@ -3,7 +3,7 @@ import { defineBddConfig } from 'playwright-bdd';
 import * as os from 'os';
 require('dotenv').config();
 
-const baseURL = process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login';
+const baseURL = (process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login').trim().replace(/^['"]|['"]$/g, '');
 
 const testDir = defineBddConfig({
   features: 'features/**/*.feature',

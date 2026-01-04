@@ -9,12 +9,12 @@ dotenv.config();
  * Prevents issues from whitespace, newlines, or concatenated values in CI/CD
  */
 export const config = {
-  baseUrl: (process.env.BASE_URL || 'http://localhost:3000').trim(),
-  apiBaseUrl: (process.env.API_BASE_URL || 'http://localhost:3000/api').trim(),
-  testUser: (process.env.TEST_USER || 'user@example.com').trim(),
+  baseUrl: (process.env.BASE_URL || 'http://localhost:3000').trim().replace(/^['"]|['"]$/g, ''),
+  apiBaseUrl: (process.env.API_BASE_URL || 'http://localhost:3000/api').trim().replace(/^['"]|['"]$/g, ''),
+  testUser: (process.env.TEST_USER || 'user@example.com').trim().replace(/^['"]|['"]$/g, ''),
   
   // ✅ CRITICAL: Trim password to prevent authentication failures
-  testPassword: (process.env.TEST_PASSWORD || 'password123').trim(),
+  testPassword: (process.env.TEST_PASSWORD || 'password123').trim().replace(/^['"]|['"]$/g, ''),
   
   browser: ((process.env.BROWSER || 'chromium').trim()) as 'chromium' | 'firefox' | 'webkit',
   timeout: parseInt((process.env.TIMEOUT || '30000').trim(), 10),

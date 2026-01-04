@@ -53,16 +53,6 @@ jobs:
           API_BASE_URL="${{ secrets.API_BASE_URL }}"
           EOF
 
-      # ✅ NEW: Verify variables early (catches issues before tests run)
-      - name: 🔍 Verify Environment Variables
-        run: |
-          echo "========== Environment Check =========="
-          echo "✅ BASE_URL length: $(grep '^BASE_URL=' .env | cut -d= -f2 | wc -c) chars"
-          echo "✅ TEST_USER: $(grep '^TEST_USER=' .env | cut -d= -f2)"
-          echo "✅ TEST_PASSWORD length: $(grep '^TEST_PASSWORD=' .env | cut -d= -f2 | wc -c) chars"
-          echo "✅ HEADLESS: $(grep '^HEADLESS=' .env | cut -d= -f2)"
-          echo "========== Check Complete =========="
-
       - name: Generate tests from features
         run: npx bddgen
 

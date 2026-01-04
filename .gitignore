@@ -11,6 +11,7 @@ allure-results/
 allure-report/
 playwright-report/
 test-results.json
+test-results/
 reports/
 junit-report.xml
 .features-gen/

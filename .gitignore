@@ -1,50 +1,263 @@
-# Dependencies
-node_modules/
+################################################################################
+# PLAYWRIGHT & AUTOMATION TEST FRAMEWORK - GITIGNORE
+################################################################################
 
-# Secrets
+################################################################################
+# DEPENDENCIES & PACKAGES
+################################################################################
+node_modules/
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+pnpm-lock.yaml
+
+################################################################################
+# ENVIRONMENT & SECRETS
+################################################################################
+# Environment variables - NEVER commit sensitive data
 .env
-.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+# Keep example file as reference
 !.env.example
 
-# Generated reports and results
+# Environment files for CI (specific configs)
+.envUI
+.envAPI
+
+# Secrets and API keys
+.secrets/
+secrets.json
+credentials.json
+
+################################################################################
+# TEST RESULTS & REPORTS
+################################################################################
+# Allure reporting
 allure-results/
 allure-report/
+.allure/
+
+# Playwright reports
 playwright-report/
+test-results/
 test-results.json
+html-results/
+
+# Cucumber reports
 reports/
+cucumber-report.html
+cucumber-report.json
 junit-report.xml
+
+# Video & screenshot artifacts
+videos/
+screenshots/
+artifacts/
+
+# Coverage reports
+coverage/
+.nyc_output/
+*.lcov
+
+################################################################################
+# AUTO-GENERATED FILES
+################################################################################
+# Playwright-BDD generated test specs
 .features-gen/
+**/*.feature.spec.js
+**/*.feature.spec.ts
 
-# IDE and editor files
+# Build outputs
+dist/
+build/
+out/
+.next/
+*.tsbuildinfo
+
+################################################################################
+# IDE, EDITOR & WORKSPACE FILES
+################################################################################
+# VS Code
 .vscode/
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.code-workspace
+settings.json
+launch.json
+tasks.json
 
-# OS generated files
+# JetBrains IDEs
+.idea/
+.idea_modules/
+*.iml
+*.iws
+*.ipr
+*.sublime-workspace
+.sublime-project
+
+# Visual Studio
+.vs/
+.vscode/
+*.suo
+*.sln.docstates
+*.user
+*.userprefs
+
+# XCode
+.xcworkspace/
+.xcodeproj/
+DerivedData/
+
+# Other editors
+*.sw[mnpcod]
+.*.sw[mnpcod]
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.tern-port
+
+################################################################################
+# OPERATING SYSTEM FILES
+################################################################################
+# macOS
 .DS_Store
 .DS_Store?
 ._*
+.AppleDouble
+.LSOverride
 .Spotlight-V100
 .Trashes
-ehthumbs.db
 Thumbs.db
 
-# Build output
-dist/
-build/
+# Windows
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-# Log files
+# Linux
+.Trash-*
+.directory
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+
+################################################################################
+# LOGGING & DEBUG FILES
+################################################################################
 *.log
 logs/
+*.logs
+debug/
+*.debug
+
+# NPM logs
 npm-debug.log*
+npm-error.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
-# Other
-package-lock.json.bak
+# TypeScript cache
+*.tsbuildinfo
+
+################################################################################
+# CACHE & TEMPORARY FILES
+################################################################################
+# npm cache
 .npm
 .eslintcache
+
+# Temporary directories
+tmp/
+temp/
+.cache/
+.turbo/
+
+# Package manager specific
+.yarn/
+.pnp
+.pnp.js
+
+################################################################################
+# BACKUP FILES
+################################################################################
+*.bak
+*.backup
+*.orig
+*.backup.*
+package.json.bak
+package.json.backup
+
+################################################################################
+# TEST-SPECIFIC IGNORES
+################################################################################
+# Test videos & artifacts only generated during test runs
+test-videos/
+failed-tests/
+retries/
+
+# Allure history (can be regenerated)
+allure-report/history/
+allure-results/history/
+
+# Generated Allure widget files
+allure-report/widgets/
+
+################################################################################
+# COMPILED OUTPUT
+################################################################################
+*.class
+*.jar
+*.war
+*.ear
+*.o
+*.so
+*.a
+*.dylib
+
+################################################################################
+# IDE SPECIFIC CACHES & INDICES
+################################################################################
+.eslintignore
+.prettierignore
+jsconfig.json
+.babelrc.json
+.eslintrc.json
+
+################################################################################
+# DOCUMENTATION BUILDS
+################################################################################
+site/
+docs/_build/
+docs/.build/
+
+################################################################################
+# MISC
+################################################################################
+# Electron main process
+main.js
+
+# Uncommon but useful ignores
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.venv
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Keep important example files
+!.env.example
+!.gitkeep

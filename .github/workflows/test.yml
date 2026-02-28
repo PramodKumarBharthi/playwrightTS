@@ -31,27 +31,23 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
-      
-      - name: Create .env file for UI tests
-        run: cp .envUI .env
 
-      # ✅ Create .env for UI tests using GitHub Secrets
-      - name: Create .env for UI tests
+      - name: Create .env file for UI tests
         run: |
-          cat > .env << EOF
+          cat > .env << 'EOF'
           # Non-sensitive configuration
           TEST_ENV=UI
           BROWSER=chromium
           TIMEOUT=30000
           WORKERS=1
           HEADLESS=true
-          
-          # Injected from GitHub Secrets (never logged)
-          BASE_URL="${{ secrets.BASE_URL }}"
-          TEST_USER="${{ secrets.TEST_USER }}"
-          TEST_PASSWORD="${{ secrets.TEST_PASSWORD }}"
-          API_BASE_URL="${{ secrets.API_BASE_URL }}"
           EOF
+          
+          # Append secrets with fallback defaults (must be outside heredoc to use GitHub Actions syntax)
+          echo "BASE_URL=${{ secrets.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login' }}" >> .env
+          echo "API_BASE_URL=${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}" >> .env
+          echo "TEST_USER=${{ secrets.TEST_USER || 'Admin' }}" >> .env
+          echo "TEST_PASSWORD=${{ secrets.TEST_PASSWORD || 'admin123' }}" >> .env
 
       - name: Generate tests from features
         run: npx bddgen
@@ -100,21 +96,28 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Create .env file for API tests
-        run: cp .envAPI .env
-
-      # ✅ Create .env for API tests using GitHub Secrets
-      - name: Create .env for API tests
         run: |
-          cat > .env << EOF
-          # Non-sensitive configuration
+          cat > .env << 'EOF'
+          # API Test Configuration
+          TEST_ENV=API
+          BROWSER=chromium
+          TIMEOUT=30000
+          WORKERS=1
           HEADLESS=true
+          ALLURE_RESULTS_DIR=allure-results
           
-          # Injected from GitHub Secrets (never logged)
-          BASE_URL="${{ secrets.BASE_URL }}"
-          TEST_USER="${{ secrets.TEST_USER }}"
-          TEST_PASSWORD="${{ secrets.TEST_PASSWORD }}"
-          API_BASE_URL="${{ secrets.API_BASE_URL }}"
+          # API Endpoints
+          GET_ENDPOINT=/v1/hooks
+          POST_ENDPOINT=/v1/hooks
+          DELETE_ENDPOINT=/v1/hooks/{hook_id}
+          PUT_ENDPOINT=/v1/projects/
           EOF
+          
+          # Append secrets with fallback defaults (must be outside heredoc to use GitHub Actions syntax)
+          echo "BASE_URL=${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}" >> .env
+          echo "API_BASE_URL=${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}" >> .env
+          echo "TEST_USER=${{ secrets.TEST_USER || 'Admin' }}" >> .env
+          echo "TEST_PASSWORD=${{ secrets.TEST_PASSWORD || 'admin123' }}" >> .env
 
       - name: Generate tests from features
         run: npx bddgen
@@ -170,7 +173,8 @@ jobs:
           find artifacts/ -type f -name "*.json" | while read file; do
             cp "$file" allure-results-merged/
           done
-          echo "✅ Mergefind allure-results-merged -type f | wc -l) test result files"
+          COUNT=$(find allure-results-merged -type f | wc -l)
+          echo "✅ Merged $COUNT test result files from artifacts/"
 
       - name: Generate merged Allure report
         run: npx allure generate allure-results-merged --clean -o allure-report

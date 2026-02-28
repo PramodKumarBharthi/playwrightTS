@@ -62,9 +62,10 @@ When('I click on the login button', async function (this: UIWorld) {
   await allure.step('Click login button and wait for navigation', async () => {
     logger.info(`🔐 Clicking login button...`);
 
-    // Use Promise.all to wait for navigation triggered by submit
+    // Use domcontentloaded instead of networkidle to avoid timeout issues
+    // networkidle waits for all network requests, which can be unreliable
     await Promise.all([
-      this.page.waitForNavigation({ waitUntil: 'networkidle' }).catch(() => undefined),
+      this.page.waitForNavigation({ waitUntil: 'domcontentloaded' }).catch(() => undefined),
       this.loginPage.submit(),
     ]);
 

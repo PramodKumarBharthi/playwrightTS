@@ -7,7 +7,7 @@ test.describe('@web @sanity @critical Login Functionality', () => {
   test('@smoke @positive Successful login with valid credentials', async ({ page }) => {
     // Given I am on the login page
     logger.info(`🌐 Navigating to: ${config.baseUrl}`);
-    await page.goto(config.baseUrl);
+    await page.goto(config.baseUrl, { waitUntil: 'domcontentloaded' });
     logger.info(`✅ Login page loaded. URL: ${page.url()}`);
 
     // When I enter "<ENV_USER>" as username
@@ -49,7 +49,7 @@ test.describe('@web @sanity @critical Login Functionality', () => {
   test('@regression @negative Unsuccessful login with invalid credentials', async ({ page }) => {
     // Given I am on the login page
     logger.info(`🌐 Navigating to: ${config.baseUrl}`);
-    await page.goto(config.baseUrl);
+    await page.goto(config.baseUrl, { waitUntil: 'domcontentloaded' });
     logger.info(`✅ Login page loaded. URL: ${page.url()}`);
 
     // When I enter "invalid@example.com" as username

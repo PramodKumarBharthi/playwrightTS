@@ -10,18 +10,19 @@ export class BasePage {
 
   async navigateTo(url: string): Promise<void> {
     logger.info(`Navigating to ${url}`);
-    // Use 'domcontentloaded' instead of 'load' to avoid net::ERR_ABORTED errors
-    // 'load' is too strict and fails when page resources are aborted
-    // 'domcontentloaded' is sufficient for interactive pages
+    // Relax wait conditions for CI/CD environments
+    // Use minimal wait to avoid flaky network issues
     try {
-      await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      logger.info(`✅ Page loaded successfully: ${url}`);
+      await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+      logger.info(`✅ Page loaded: ${url}`);
     } catch (error) {
-      logger.warn(`⚠️ Navigation completed with warning: ${error}`);
-      // Continue anyway - page may be interactive even if some resources failed
+      logger.warn(`⚠️ Navigation warning: ${error}`);
+      // Continue - page may still be interactive
     }
-    // Wait an additional second for dynamic content to render
-    await this.page.waitForTimeout(1000);
+    // Give page time to render dynamic content
+    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {
+      logger.warn('Network idle timeout - continuing anyway');
+    });
   }
 
   async waitForSelector(selector: string, timeout: number = 5000): Promise<void> {

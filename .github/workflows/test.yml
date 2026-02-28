@@ -33,21 +33,24 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Create .env file for UI tests
+        env:
+          UI_BASE_URL: ${{ secrets.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login' }}
+          UI_API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}
+          UI_TEST_USER: ${{ secrets.TEST_USER || 'Admin' }}
+          UI_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'admin123' }}
         run: |
-          cat > .env << 'EOF'
-          # Non-sensitive configuration
+          cat > .env << EOF
           TEST_ENV=UI
           BROWSER=chromium
           TIMEOUT=30000
           WORKERS=1
           HEADLESS=true
+          BASE_URL=$UI_BASE_URL
+          API_BASE_URL=$UI_API_BASE_URL
+          TEST_USER=$UI_TEST_USER
+          TEST_PASSWORD=$UI_TEST_PASSWORD
           EOF
-          
-          # Append secrets with fallback defaults (must be outside heredoc to use GitHub Actions syntax)
-          echo "BASE_URL=${{ secrets.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login' }}" >> .env
-          echo "API_BASE_URL=${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}" >> .env
-          echo "TEST_USER=${{ secrets.TEST_USER || 'Admin' }}" >> .env
-          echo "TEST_PASSWORD=${{ secrets.TEST_PASSWORD || 'admin123' }}" >> .env
+          cat .env
 
       - name: Generate tests from features
         run: npx bddgen
@@ -96,28 +99,28 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Create .env file for API tests
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}
+          API_TEST_USER: ${{ secrets.TEST_USER || 'Admin' }}
+          API_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'admin123' }}
         run: |
-          cat > .env << 'EOF'
-          # API Test Configuration
+          cat > .env << EOF
           TEST_ENV=API
           BROWSER=chromium
           TIMEOUT=30000
           WORKERS=1
           HEADLESS=true
           ALLURE_RESULTS_DIR=allure-results
-          
-          # API Endpoints
+          BASE_URL=$API_BASE_URL
+          API_BASE_URL=$API_BASE_URL
           GET_ENDPOINT=/v1/hooks
           POST_ENDPOINT=/v1/hooks
           DELETE_ENDPOINT=/v1/hooks/{hook_id}
           PUT_ENDPOINT=/v1/projects/
+          TEST_USER=$API_TEST_USER
+          TEST_PASSWORD=$API_TEST_PASSWORD
           EOF
-          
-          # Append secrets with fallback defaults (must be outside heredoc to use GitHub Actions syntax)
-          echo "BASE_URL=${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}" >> .env
-          echo "API_BASE_URL=${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}" >> .env
-          echo "TEST_USER=${{ secrets.TEST_USER || 'Admin' }}" >> .env
-          echo "TEST_PASSWORD=${{ secrets.TEST_PASSWORD || 'admin123' }}" >> .env
+          cat .env
 
       - name: Generate tests from features
         run: npx bddgen

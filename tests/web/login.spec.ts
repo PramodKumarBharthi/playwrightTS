@@ -1,24 +1,22 @@
 import { test, expect } from '@playwright/test';
 import { logger } from '../../src/utils/logger';
 import { testData } from '../../src/utils/testData';
+import { config } from '../../src/config/config';
 
 test.describe('@web @sanity @critical Login Functionality', () => {
   test('@smoke @positive Successful login with valid credentials', async ({ page }) => {
     // Given I am on the login page
-    const baseUrl = process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login';
-    logger.info(`🌐 Navigating to: ${baseUrl}`);
-    await page.goto(baseUrl);
+    logger.info(`🌐 Navigating to: ${config.baseUrl}`);
+    await page.goto(config.baseUrl);
     logger.info(`✅ Login page loaded. URL: ${page.url()}`);
 
     // When I enter "<ENV_USER>" as username
-    const username = process.env.TEST_USER || 'Admin';
-    logger.info(`👤 Entering username: "${username}"`);
-    await page.fill('input[name="username"]', username);
+    logger.info(`👤 Entering username: "${config.testUser}"`);
+    await page.fill('input[name="username"]', config.testUser);
 
     // And I enter "<ENV_PASS>" as password
-    const password = process.env.TEST_PASSWORD || 'admin123';
     logger.info(`🔒 Entering password: "***"`);
-    await page.fill('input[name="password"]', password);
+    await page.fill('input[name="password"]', config.testPassword);
 
     // And I click on the login button
     logger.info(`🔐 Clicking login button...`);
@@ -50,9 +48,8 @@ test.describe('@web @sanity @critical Login Functionality', () => {
 
   test('@regression @negative Unsuccessful login with invalid credentials', async ({ page }) => {
     // Given I am on the login page
-    const baseUrl = process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login';
-    logger.info(`🌐 Navigating to: ${baseUrl}`);
-    await page.goto(baseUrl);
+    logger.info(`🌐 Navigating to: ${config.baseUrl}`);
+    await page.goto(config.baseUrl);
     logger.info(`✅ Login page loaded. URL: ${page.url()}`);
 
     // When I enter "invalid@example.com" as username

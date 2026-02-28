@@ -10,7 +10,7 @@ export class BasePage {
 
   async navigateTo(url: string): Promise<void> {
     logger.info(`Navigating to ${url}`);
-    await this.page.goto(url, { waitUntil: 'networkidle' });
+    await this.page.goto(url, { waitUntil: 'load', timeout: 30000 });
     await this.page.waitForLoadState('domcontentloaded');
     // Wait an additional second for dynamic content to render
     await this.page.waitForTimeout(1000);

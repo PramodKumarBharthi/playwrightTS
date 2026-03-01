@@ -1,8 +1,9 @@
 TEST_ENV=UI
-BASE_URL=https://opensource-demo.orangehrmlive.com/web/index.php/auth/login
+BASE_URL=https://practicetestautomation.com/practice-test-login/
 API_BASE_URL=https://posthook-api.mock.beeceptor.com
-TEST_USER=Admin
-TEST_PASSWORD=admin123
+BROWSER=chromium
+TEST_USER=student
+TEST_PASSWORD=Password123
 HEADLESS=true
 TIMEOUT=30000
 WORKERS=1

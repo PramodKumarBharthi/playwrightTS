@@ -16,7 +16,7 @@ Feature: Login Functionality
   @regression @negative
   Scenario: Unsuccessful login with invalid credentials
     Given I am on the login page
-    When I enter "invalid@example.com" as username
-    And I enter "wrongpassword" as password
+    When I enter "invalidUser" as username
+    And I enter "Password123" as password
     And I click on the login button
-    Then I should see an error message "Invalid credentials"
+    Then I should see an error message "invalid"

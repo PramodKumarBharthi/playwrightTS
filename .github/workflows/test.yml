@@ -31,27 +31,26 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
-      
-      - name: Create .env file for UI tests
-        run: cp .envUI .env
 
-      # ✅ Create .env for UI tests using GitHub Secrets
-      - name: Create .env for UI tests
+      - name: Create .env file for UI tests
+        env:
+          UI_BASE_URL: ${{ secrets.BASE_URL || 'https://practicetestautomation.com/practice-test-login/' }}
+          UI_API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}
+          UI_TEST_USER: ${{ secrets.TEST_USER || 'student' }}
+          UI_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'Password123' }}
         run: |
           cat > .env << EOF
-          # Non-sensitive configuration
           TEST_ENV=UI
           BROWSER=chromium
           TIMEOUT=30000
           WORKERS=1
           HEADLESS=true
-          
-          # Injected from GitHub Secrets (never logged)
-          BASE_URL="${{ secrets.BASE_URL }}"
-          TEST_USER="${{ secrets.TEST_USER }}"
-          TEST_PASSWORD="${{ secrets.TEST_PASSWORD }}"
-          API_BASE_URL="${{ secrets.API_BASE_URL }}"
+          BASE_URL=$UI_BASE_URL
+          API_BASE_URL=$UI_API_BASE_URL
+          TEST_USER=$UI_TEST_USER
+          TEST_PASSWORD=$UI_TEST_PASSWORD
           EOF
+          cat .env
 
       - name: Generate tests from features
         run: npx bddgen
@@ -61,13 +60,11 @@ jobs:
 
       - name: Upload Allure results
         if: always()
-        run: |
-          if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
-            npx allure generate allure-results --clean -o allure-report
-          else
-            echo "No allure-results found, skipping report generation"
-            mkdir -p allure-report
-          fi
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-web-chromium
+          path: allure-results/
+          retention-days: 30
 
       - name: Upload HTML report
         if: always()
@@ -100,21 +97,28 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Create .env file for API tests
-        run: cp .envAPI .env
-
-      # ✅ Create .env for API tests using GitHub Secrets
-      - name: Create .env for API tests
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}
+          API_TEST_USER: ${{ secrets.TEST_USER || 'Admin' }}
+          API_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'admin123' }}
         run: |
           cat > .env << EOF
-          # Non-sensitive configuration
+          TEST_ENV=API
+          BROWSER=chromium
+          TIMEOUT=30000
+          WORKERS=1
           HEADLESS=true
-          
-          # Injected from GitHub Secrets (never logged)
-          BASE_URL="${{ secrets.BASE_URL }}"
-          TEST_USER="${{ secrets.TEST_USER }}"
-          TEST_PASSWORD="${{ secrets.TEST_PASSWORD }}"
-          API_BASE_URL="${{ secrets.API_BASE_URL }}"
+          ALLURE_RESULTS_DIR=allure-results
+          BASE_URL=$API_BASE_URL
+          API_BASE_URL=$API_BASE_URL
+          GET_ENDPOINT=/v1/hooks
+          POST_ENDPOINT=/v1/hooks
+          DELETE_ENDPOINT=/v1/hooks/{hook_id}
+          PUT_ENDPOINT=/v1/projects/
+          TEST_USER=$API_TEST_USER
+          TEST_PASSWORD=$API_TEST_PASSWORD
           EOF
+          cat .env
 
       - name: Generate tests from features
         run: npx bddgen
@@ -140,10 +144,18 @@ jobs:
           path: allure-results/
           retention-days: 30
 
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-api
+          path: allure-report/
+          retention-days: 30
+
   publish-allure-report:
     name: Publish Merged Allure Report
     needs: [ web-tests, api-tests ]
-    if: always() && github.ref == 'refs/heads/main'
+    if: always()
     permissions:
       contents: write
       pages: write
@@ -170,7 +182,8 @@ jobs:
           find artifacts/ -type f -name "*.json" | while read file; do
             cp "$file" allure-results-merged/
           done
-          echo "✅ Mergefind allure-results-merged -type f | wc -l) test result files"
+          COUNT=$(find allure-results-merged -type f | wc -l)
+          echo "✅ Merged $COUNT test result files from artifacts/"
 
       - name: Generate merged Allure report
         run: npx allure generate allure-results-merged --clean -o allure-report

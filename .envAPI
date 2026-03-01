@@ -1,7 +1,7 @@
 TEST_ENV=API
-API_BASE_URL=https://posthook-api.mock.beeceptor.com
 BASE_URL=https://posthook-api.mock.beeceptor.com
 API_BASE_URL=https://posthook-api.mock.beeceptor.com
+BROWSER=chromium
 HEADLESS=true
 TIMEOUT=30000
 WORKERS=1
@@ -12,6 +12,3 @@ DELETE_ENDPOINT=/v1/hooks/{hook_id}
 PUT_ENDPOINT=/v1/projects/
 TEST_USER=Admin
 TEST_PASSWORD=admin123
-HEADLESS=true
-TIMEOUT=30000
-WORKERS=1

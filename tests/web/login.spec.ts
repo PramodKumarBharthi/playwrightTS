@@ -10,40 +10,31 @@ test.describe('@web @sanity @critical Login Functionality', () => {
     await page.goto(config.baseUrl, { waitUntil: 'domcontentloaded' });
     logger.info(`✅ Login page loaded. URL: ${page.url()}`);
 
-    // When I enter "<ENV_USER>" as username
+    // When I enter username
     logger.info(`👤 Entering username: "${config.testUser}"`);
-    await page.fill('input[name="username"]', config.testUser);
+    await page.fill('#username', config.testUser);
 
-    // And I enter "<ENV_PASS>" as password
+    // And I enter password
     logger.info(`🔒 Entering password: "***"`);
-    await page.fill('input[name="password"]', config.testPassword);
+    await page.fill('#password', config.testPassword);
 
     // And I click on the login button
     logger.info(`🔐 Clicking login button...`);
-    await page.click('button[type="submit"]');
-    await page.waitForTimeout(3000);
-    logger.info(`✅ Login submitted. New URL: ${page.url()}`);
+    await page.click('#submit');
 
-    // Then I should be redirected to the dashboard
-    const currentUrl = page.url();
-    logger.info(`📍 Current URL: ${currentUrl}`);
+    // Then I should see success page
+    await page.waitForURL('**/logged-in-successfully', { timeout: 10000 }).catch(() => {
+      logger.warn('URL redirect timeout - checking page content');
+    });
+    const finalUrl = page.url();
+    logger.info(`✅ Final URL: ${finalUrl}`);
 
-    const isStillOnLoginPage = currentUrl.includes('/auth/login');
-    logger.info(`🔐 Still on login page: ${isStillOnLoginPage}`);
+    const isOnSuccessPage = finalUrl.includes('/logged-in-successfully');
+    const pageContent = await page.content();
+    const hasSuccessMessage = pageContent.toLowerCase().includes('congratulations') || pageContent.toLowerCase().includes('successfully logged in');
 
-    const errorElement = page.locator('.oxd-alert-content-text').first();
-    const hasErrorMessage = await errorElement.isVisible({ timeout: 2000 }).catch(() => false);
-
-    if (hasErrorMessage) {
-      const errorText = await errorElement.textContent();
-      logger.error(`❌ Login failed with error: "${errorText}"`);
-    } else {
-      logger.info(`✅ No error message present`);
-    }
-
-    expect(hasErrorMessage, 'Login should not show error message').toBeFalsy();
-    expect(isStillOnLoginPage, `Should be redirected away from login page. Current URL: ${currentUrl}`).toBeFalsy();
-    logger.info(`✅ Successfully redirected to dashboard`);
+    expect(isOnSuccessPage || hasSuccessMessage, 'Should be on success page or see success message').toBeTruthy();
+    logger.info(`✅ Successfully logged in`);
   });
 
   test('@regression @negative Unsuccessful login with invalid credentials', async ({ page }) => {
@@ -52,26 +43,29 @@ test.describe('@web @sanity @critical Login Functionality', () => {
     await page.goto(config.baseUrl, { waitUntil: 'domcontentloaded' });
     logger.info(`✅ Login page loaded. URL: ${page.url()}`);
 
-    // When I enter "invalid@example.com" as username
-    logger.info(`👤 Entering username: "invalid@example.com"`);
-    await page.fill('input[name="username"]', 'invalid@example.com');
+    // When I enter invalid username
+    logger.info(`👤 Entering username: "invalidUser"`);
+    await page.fill('#username', 'invalidUser');
 
-    // And I enter "wrongpassword" as password
+    // And I enter correct password
     logger.info(`🔒 Entering password: "***"`);
-    await page.fill('input[name="password"]', 'wrongpassword');
+    await page.fill('#password', 'Password123');
 
     // And I click on the login button
     logger.info(`🔐 Clicking login button...`);
-    await page.click('button[type="submit"]');
-    await page.waitForTimeout(3000);
+    await page.click('#submit');
+    await page.waitForTimeout(2000);
     logger.info(`✅ Login submitted. New URL: ${page.url()}`);
 
-    // Then I should see an error message "Invalid credentials"
-    const errorElement = page.locator('.oxd-alert-content-text').first();
-    const actualMessage = await errorElement.textContent();
-    const expected = testData.login.messages.error;
+    // Then I should see an error message
+    const errorMsg = page.locator('#error');
+    const isErrorVisible = await errorMsg.isVisible({ timeout: 5000 }).catch(() => false);
+    expect(isErrorVisible, 'Error message should be visible').toBeTruthy();
+
+    const actualMessage = await errorMsg.textContent();
+    const expectedError = 'Your username is invalid';
     logger.info(`❌ Error message found: "${actualMessage}"`);
-    logger.info(`🔍 Expecting: "${expected}"`);
-    expect(actualMessage).toContain(expected);
+    logger.info(`🔍 Expecting: "${expectedError}"`);
+    expect(actualMessage?.toLowerCase()).toContain(expectedError.toLowerCase());
   });
 });

@@ -34,10 +34,10 @@ jobs:
 
       - name: Create .env file for UI tests
         env:
-          UI_BASE_URL: ${{ secrets.BASE_URL || 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login' }}
+          UI_BASE_URL: ${{ secrets.BASE_URL || 'https://practicetestautomation.com/practice-test-login/' }}
           UI_API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://posthook-api.mock.beeceptor.com' }}
-          UI_TEST_USER: ${{ secrets.TEST_USER || 'Admin' }}
-          UI_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'admin123' }}
+          UI_TEST_USER: ${{ secrets.TEST_USER || 'student' }}
+          UI_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'Password123' }}
         run: |
           cat > .env << EOF
           TEST_ENV=UI
@@ -60,13 +60,11 @@ jobs:
 
       - name: Upload Allure results
         if: always()
-        run: |
-          if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
-            npx allure generate allure-results --clean -o allure-report
-          else
-            echo "No allure-results found, skipping report generation"
-            mkdir -p allure-report
-          fi
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-web-chromium
+          path: allure-results/
+          retention-days: 30
 
       - name: Upload HTML report
         if: always()
@@ -146,10 +144,18 @@ jobs:
           path: allure-results/
           retention-days: 30
 
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-api
+          path: allure-report/
+          retention-days: 30
+
   publish-allure-report:
     name: Publish Merged Allure Report
     needs: [ web-tests, api-tests ]
-    if: always() && github.ref == 'refs/heads/main'
+    if: always()
     permissions:
       contents: write
       pages: write

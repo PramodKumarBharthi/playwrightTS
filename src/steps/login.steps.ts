@@ -35,7 +35,8 @@ When('I enter {string} as username', async function (this: UIWorld, username: st
       finalUsername = config.testUser;
     }
     logger.info(`👤 Entering username: "${finalUsername}" (from: "${username}")`);
-    await this.loginPage.enterUsername(finalUsername);
+    // Practice Test Automation uses id="username"
+    await this.loginPage.fill('#username', finalUsername);
 
     await allure.parameter('Username', finalUsername);
     logger.info(`✅ Username entered successfully`);
@@ -50,7 +51,8 @@ When('I enter {string} as password', async function (this: UIWorld, password: st
       finalPassword = config.testPassword;
     }
     logger.info(`🔒 Entering password: "${finalPassword ? '***' : '(empty)'}" (from: "${password}")`);
-    await this.loginPage.enterPassword(finalPassword);
+    // Practice Test Automation uses id="password"
+    await this.loginPage.fill('#password', finalPassword);
 
     await allure.parameter('Password', '***');
     logger.info(`✅ Password entered successfully`);
@@ -72,7 +74,8 @@ When('I click on the login button', async function (this: UIWorld) {
       logger.warn(`Navigation warning: ${error}`);
     }
     
-    await this.loginPage.submit();
+    // Practice Test Automation uses id="submit"
+    await this.loginPage.click('#submit');
     logger.info(`✅ Login submitted. New URL: ${this.page.url()}`);
     await allure.attachment('Post-Login URL', this.page.url(), 'text/plain');
   });
@@ -80,50 +83,29 @@ When('I click on the login button', async function (this: UIWorld) {
 
 /* Then I should be redirected to the dashboard */
 Then('I should be redirected to the dashboard', async function (this: UIWorld) {
-  await allure.step('Verify successful login and dashboard redirect', async () => {
+  await allure.step('Verify successful login and redirect', async () => {
+    // Wait for redirect to success page
+    await this.page.waitForURL('**/logged-in-successfully', { timeout: 10000 }).catch(() => {
+      logger.warn('URL redirect timeout - checking page content instead');
+    });
+
     const currentUrl = this.page.url();
     logger.info(`📍 Current URL: ${currentUrl}`);
     await allure.attachment('Current URL', currentUrl, 'text/plain');
 
-    // Detect if still on login page by known login path fragment
-    const isStillOnLoginPage = currentUrl.includes('/auth/login') || currentUrl.includes('/login');
-    logger.info(`🔐 Still on login page: ${isStillOnLoginPage}`);
+    // Practice Test Automation redirects to /logged-in-successfully/ on success
+    const isOnSuccessPage = currentUrl.includes('/logged-in-successfully');
+    logger.info(`✅ On success page: ${isOnSuccessPage}`);
 
-    // Check for error message that indicates login failed
-    // Consistent selector used: '.oxd-alert-content-text' (update if your app uses different one)
-    const errorElement = this.page.locator('.oxd-alert-content-text').first();
-    const hasErrorMessage = await errorElement.isVisible({ timeout: 2000 }).catch(() => false);
+    // Also check for success message on page
+    const pageContent = await this.page.content();
+    const hasSuccessMessage = pageContent.toLowerCase().includes('Congratulations') || pageContent.toLowerCase().includes('successfully logged in');
+    logger.info(`✅ Has success message: ${hasSuccessMessage}`);
 
-    if (hasErrorMessage) {
-      const errorText = await errorElement.textContent();
-      logger.error(`❌ Login failed with error: "${errorText}"`);
-      await allure.attachment('Login Error', errorText || 'Unknown error', 'text/plain');
+    expect(isOnSuccessPage || hasSuccessMessage, 'Should be on success page or see success message').toBeTruthy();
 
-      const screenshot = await this.page.screenshot({ fullPage: true });
-      await allure.attachment('Login Error Screenshot', screenshot, 'image/png');
-    } else {
-      logger.info(`✅ No error message present`);
-    }
-
-    // Additional check: dashboard visible using dashboard page object
-    let dashboardVisible = false;
-    try {
-      dashboardVisible = await this.dashboardPage.isVisible();
-      logger.info(`📊 Dashboard visible by page object: ${dashboardVisible}`);
-    } catch (e) {
-      logger.warn(`Could not verify dashboard visibility via page object: ${e}`);
-    }
-
-    // Main assertions
-    expect(hasErrorMessage, 'Login should not show error message').toBe(false);
-    expect(isStillOnLoginPage, `Should be redirected away from login page. Current URL: ${currentUrl}`).toBe(false);
-    expect(dashboardVisible, 'Dashboard should be visible after successful login').toBe(true);
-
-    logger.info(`✅ Successfully redirected to dashboard`);
-
-    // Capture success screenshot
     const screenshot = await this.page.screenshot({ fullPage: true });
-    await allure.attachment('Dashboard View', screenshot, 'image/png');
+    await allure.attachment('Success Page', screenshot, 'image/png');
   });
 });
 
@@ -131,22 +113,28 @@ Then('I should be redirected to the dashboard', async function (this: UIWorld) {
 Then('I should see an error message {string}', async function (this: UIWorld, expectedMessage: string) {
   await allure.step(`Verify error message: "${expectedMessage}"`, async () => {
     try {
-      // Use loginPage helper to fetch error text (keeps selectors centralized)
-      const actualMessage = await this.loginPage.getErrorMessage();
-      const expected = expectedMessage || testData.login.messages.error;
+      // Practice Test Automation displays error messages in #error div
+      const errorElement = this.page.locator('#error');
+      const hasError = await errorElement.isVisible({ timeout: 5000 }).catch(() => false);
 
-      logger.info(`❌ Error message found: "${actualMessage}"`);
-      logger.info(`🔍 Expecting: "${expected}"`);
+      if (hasError) {
+        const actualMessage = await errorElement.textContent();
+        logger.info(`❌ Error message found: "${actualMessage}"`);
+        logger.info(`🔍 Expecting message containing: "${expectedMessage}"`);
 
-      await allure.parameter('Expected Message', expected);
-      await allure.parameter('Actual Message', actualMessage);
+        await allure.parameter('Expected Pattern', expectedMessage);
+        await allure.parameter('Actual Message', actualMessage || '(empty)');
 
-      expect(actualMessage).toContain(expected);
+        expect(actualMessage?.toLowerCase()).toContain(expectedMessage.toLowerCase());
 
-      const screenshot = await this.page.screenshot({ fullPage: true });
-      await allure.attachment('Error Message Display', screenshot, 'image/png');
+        const screenshot = await this.page.screenshot({ fullPage: true });
+        await allure.attachment('Error Message Display', screenshot, 'image/png');
 
-      logger.info(`✅ Error message assertion passed`);
+        logger.info(`✅ Error message assertion passed`);
+      } else {
+        logger.error('❌ No error message displayed when one was expected');
+        throw new Error(`Expected error message "${expectedMessage}" but none was shown`);
+      }
     } catch (error) {
       logger.error(`❌ Error message assertion failed: ${error}`);
       logger.error(`📍 Current URL: ${this.page.url()}`);
